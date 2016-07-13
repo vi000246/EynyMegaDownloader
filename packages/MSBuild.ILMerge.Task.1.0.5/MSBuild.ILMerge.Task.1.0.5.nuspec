@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>MSBuild.ILMerge.Task</id>
+    <version>1.0.5</version>
+    <title>MSBuild ILMerge task</title>
+    <authors>Alexander Nosenko</authors>
+    <owners>Alexander Nosenko</owners>
+    <licenseUrl>https://ilmergemsbuild.codeplex.com/license</licenseUrl>
+    <projectUrl>https://ilmergemsbuild.codeplex.com/</projectUrl>
+    <iconUrl>http://www.veryicon.com/icon/32/System/Refresh%20Cl/System%20Package.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>MSBuild ILMerge task allows you to use the famous ILMerge utility (ILMerge nuget package, see http://research.microsoft.com/en-us/people/mbarnett/ILMerge.aspx) in automated builds and/or Visual Studio 2012 projects.
+      It is similar to the ILMerge.MSBuild.Tasks nuget package, originally published by neoeinstein@gmail.com (that seems to be abandoned) with the following additional features:
+      - It supports all the latest ILMerge options;
+      - ILMerge.exe is discovered as package dependency;
+      - The .targets file overrides the CopyFilesToOutputDirectory build target, leaving the AfterBuild target free for further customizaton;
+      - It attempts to guess the reasonable merge order for the included assemblies and lets you to finetune it with a configuration file.
+
+      ILMerge.exe is not included into this package because its license prohibits redistribution. Referencing it as package dependency and loading it from its package location ensures that the latest ILMerge version is always used.</description>
+    <summary>MSBuild ILMerge task allows you to use the famous ILMerge utility in automated builds and/or Visual Studio 2013/15 projects.</summary>
+    <releaseNotes>Supports transitive merge and all ILMerge command-line parameters (including InternalizeExcludeFile). Safe to use with VS2015/Roslyn.</releaseNotes>
+    <copyright>Copyright 2013-2016 Alexander Nosenko</copyright>
+    <tags>MSBuild ILMerge</tags>
+    <dependencies>
+      <dependency id="ilmerge" version="2.13.307" />
+    </dependencies>
+  </metadata>
+</package>
