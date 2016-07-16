@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace EynyCrawler
@@ -22,52 +23,70 @@ namespace EynyCrawler
 
         public string getHTMLbyWebRequest(string strUrl, string postData, ref CookieCollection Cookies)
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(strUrl);
-            if (Cookies.Count == 0)
+            int Tries = 10;
+            //retry
+            while (true)
             {
-                request.CookieContainer = new CookieContainer();
-            }
-            else
-            {
-                request.CookieContainer = new CookieContainer();
-                request.CookieContainer.Add(Cookies);            
-                //cookie預設有同意瀏覽18禁的cookie
-                Cookie eynycookie = new Cookie("djAX_e8d7_agree", "576");
-                eynycookie.Domain = "eyny.com";
-                request.CookieContainer.Add(eynycookie);
-            }
-            try
-            {
-                request.Method = "POST";
-                request.ContentType = "application/x-www-form-urlencoded";
-                request.UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36";
-                request.ServicePoint.Expect100Continue = false;
-                //組出查詢字串
-                if (postData != null)
+                
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(strUrl);
+                if (Cookies.Count == 0)
                 {
-                    byte[] postBytes = Encoding.ASCII.GetBytes(postData);
-                    request.ContentLength = postBytes.Length;
-                    using (var dataStream = request.GetRequestStream())
+                    request.CookieContainer = new CookieContainer();
+                }
+                else
+                {
+                    request.CookieContainer = new CookieContainer();
+                    request.CookieContainer.Add(Cookies);
+                    //cookie預設有同意瀏覽18禁的cookie
+                    Cookie eynycookie = new Cookie("djAX_e8d7_agree", "576");
+                    eynycookie.Domain = "eyny.com";
+                    request.CookieContainer.Add(eynycookie);
+                }
+                try
+                {
+                    request.Method = "POST";
+                    request.ContentType = "application/x-www-form-urlencoded";
+                    request.UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36";
+                    request.ServicePoint.Expect100Continue = false;
+                    //組出查詢字串
+                    if (postData != null)
                     {
-                        dataStream.Write(postBytes, 0, postBytes.Length);
+                        byte[] postBytes = Encoding.ASCII.GetBytes(postData);
+                        request.ContentLength = postBytes.Length;
+                        using (var dataStream = request.GetRequestStream())
+                        {
+                            dataStream.Write(postBytes, 0, postBytes.Length);
+                        }
+                    }
+                    Stream myRequestStream = request.GetRequestStream();
+
+                    HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                    //將resp.cookie的值寫到ref的cookie裡
+                    Cookies.Add(response.Cookies);
+                    Stream myResponseStream = response.GetResponseStream();
+                    StreamReader myStreamReader = new StreamReader(myResponseStream, Encoding.UTF8);
+                    string retString = myStreamReader.ReadToEnd();
+                    myStreamReader.Close();
+                    myResponseStream.Close();
+
+                    return retString;
+                }
+                catch (WebException ex)
+                {
+                    Tries--;
+                    if (ex.Status != WebExceptionStatus.ReceiveFailure &&
+                    ex.Status != WebExceptionStatus.ConnectFailure &&
+                    ex.Status != WebExceptionStatus.KeepAliveFailure&&
+                    ex.Status != WebExceptionStatus.NameResolutionFailure)
+                    {
+                        throw new Exception("發出請求失敗");
+                    }
+                    if (Tries < 0) {
+                        //暫停10秒
+                        Thread.Sleep(10000);
+                        throw new Exception("重試次數10次 發出請求失敗");
                     }
                 }
-                Stream myRequestStream = request.GetRequestStream();
-
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                //將resp.cookie的值寫到ref的cookie裡
-                Cookies.Add(response.Cookies);
-                Stream myResponseStream = response.GetResponseStream();
-                StreamReader myStreamReader = new StreamReader(myResponseStream, Encoding.UTF8);
-                string retString = myStreamReader.ReadToEnd();
-                myStreamReader.Close();
-                myResponseStream.Close();
-
-                return retString;
-            }
-            catch
-            {
-                throw new Exception("發出請求失敗");
             }
         }
         //取得標題有mega字眼的標題名稱和連結地址

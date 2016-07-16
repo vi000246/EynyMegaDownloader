@@ -6,7 +6,7 @@ public class FileHandler
     //create一個文字檔
     public void CreateFile(string path)
 	{
-        string filepath = path + "\\Mega下載連結.txt";
+        string filepath = path + "\\"+DateTime.Now.Date.ToString("MM-dd")+" Mega下載連結.txt";
         //建立文字檔
         if (!File.Exists(filepath))
         {
