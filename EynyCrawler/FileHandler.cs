@@ -10,8 +10,6 @@ public class FileHandler
     //dataview物件
     public DataView data;
 
-    //資料庫欄位
-
     public FileHandler() {
         var sqlite_connect = new SQLiteConnection("data source=EynyDownloadDB.s3db; Version=3;");
         //建立資料庫連線
@@ -56,7 +54,7 @@ public class FileHandler
     }
 
     //將結果寫進文字檔
-    public void WriteResultToFile(ResultModel result,string path)
+    public void WriteResultToFile(Article result,string path)
     {
         try
         {

@@ -191,19 +191,19 @@ namespace EynyCrawler
             string HomePage =result;
             ArticleHtml.Add(HomePage);
             //取得第N頁的Url 用來找下一頁的文章
-            Dictionary<string, string> JumpPage = crawler.FindPage(HomePage);
-            //迴圈取得第2~N頁的html(文章列表)
-                for (int i = 0; i < JumpPage.Count; i++)
-                {
-                    var entry = JumpPage.ElementAt(i);
-                    //將html加入list
-                    string responseFromServer = crawler.getHTMLbyWebRequest(hostUri + entry.Value,"", ref Cookies);
-                    ArticleHtml.Add(responseFromServer);
-                    this.Invoke((MethodInvoker)delegate
-                    {
-                        label7.Text = String.Format("目前進度:取得文章列表中...(第{0}頁)", (i + 1));
-                    });
-                }
+            //Dictionary<string, string> JumpPage = crawler.FindPage(HomePage);
+            ////迴圈取得第2~N頁的html(文章列表)
+            //    for (int i = 0; i < JumpPage.Count; i++)
+            //    {
+            //        var entry = JumpPage.ElementAt(i);
+            //        //將html加入list
+            //        string responseFromServer = crawler.getHTMLbyWebRequest(hostUri + entry.Value,"", ref Cookies);
+            //        ArticleHtml.Add(responseFromServer);
+            //        this.Invoke((MethodInvoker)delegate
+            //        {
+            //            label7.Text = String.Format("目前進度:取得文章列表中...(第{0}頁)", (i + 1));
+            //        });
+            //    }
             
             return ArticleHtml;
         }
@@ -236,9 +236,8 @@ namespace EynyCrawler
             //迴圈取出下載頁面的html 將文章標題 文章連結與下面頁面html存入araticle物件
             string uri = hostUri + dic.Value;
             string responseFromServer = crawler.getHTMLbyWebRequest(uri,"", ref Cookies);
-            Article article = new Article(dic.Key,
-                                            dic.Value,
-                                            responseFromServer);
+            Article article = new Article();
+            article.SetArticle(dic.Key,dic.Value,responseFromServer);
 
             //發表回覆訊息
             if (checkBox2.Checked)
