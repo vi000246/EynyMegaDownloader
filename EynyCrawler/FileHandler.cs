@@ -33,15 +33,9 @@ public class FileHandler
         //呈現全部的資料
         DataSet dataSet = new DataSet();
 
-        //如果沒輸入搜尋條件 只取前兩百筆資料
-        string limit = (String.IsNullOrEmpty(title) &&
-                        String.IsNullOrEmpty(date_B.ToString()) &&
-                        String.IsNullOrEmpty(date_E.ToString())) ?
-            "limit 200" : "";
-
         SQLiteDataAdapter dataAdapter = new SQLiteDataAdapter(
             @"Select Date as 日期,FileName as 檔名,Link as 文章連結,Size as 檔案大小,
-              Password as 解壓密碼,DownLoadLink as 下載連結  from MainText Order by Date desc" + limit, sqlite_connect);
+              Password as 解壓密碼,DownLoadLink as 下載連結  from MainText Order by Date desc", sqlite_connect);
         dataAdapter.Fill(dataSet);
 
         DataView dv = new DataView(dataSet.Tables[0]);
@@ -66,8 +60,11 @@ public class FileHandler
     }
 
     //刪除所有資料
-    public void DeleteAllData(){
-        db.CommandText = @"Delete from MainText";
+    public void DeleteAllData(string title, DateTime date_B, DateTime date_E)
+    {
+        db.CommandText = "Delete from MainText WHERE Date >= '"+date_B+"' AND Date < '"+date_E+"' ";
+        if (!String.IsNullOrEmpty(title))
+            db.CommandText += " And FileName like '%"+title+"%'";
         db.ExecuteNonQuery();
     }
 
