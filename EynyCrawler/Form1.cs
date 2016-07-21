@@ -49,10 +49,9 @@ namespace EynyCrawler
             comboBox1.SelectedIndex = 0;
 
             textBox4.Text =replyMsg;
-
+            dataGridView1.DataSource = FileHandler.data;
 
             //自動執行
-
         }
 
         private void button1_Click(object sender, EventArgs e)

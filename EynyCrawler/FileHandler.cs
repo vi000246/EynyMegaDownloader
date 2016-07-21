@@ -1,8 +1,35 @@
 ﻿using System;
 using System.IO;
+using System.Data.SQLite;
+using System.Data; 
 
 public class FileHandler
 {
+    //command物件
+    public SQLiteCommand db;
+    //dataview物件
+    public DataView data;
+
+    //資料庫欄位
+
+    public FileHandler() {
+        var sqlite_connect = new SQLiteConnection("data source=EynyDownloadDB.s3db; Version=3;");
+        //建立資料庫連線
+
+        sqlite_connect.Open();// Open
+        var sqlite_cmd = sqlite_connect.CreateCommand();//create command
+        //將Command物件丟給全域變數
+        db = sqlite_cmd;
+
+        //呈現全部的資料
+        DataSet dataSet = new DataSet();
+        SQLiteDataAdapter dataAdapter = new SQLiteDataAdapter("Select * from MainText", sqlite_connect);
+        dataAdapter.Fill(dataSet);
+
+        data = dataSet.Tables[0].DefaultView;
+    }
+
+
     //create一個文字檔
     public void CreateFile(string path)
 	{
@@ -52,5 +79,6 @@ public class FileHandler
             throw ex;
         }
     }
+
 
 }
