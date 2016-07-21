@@ -53,9 +53,8 @@ namespace EynyCrawler
             dateTimePicker2.CustomFormat = " ";
 
             textBox4.Text =replyMsg;
+            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridView1.DataSource = FileHandler.GetAllData(textBox5.Text, dateTimePicker1.Value, dateTimePicker2.Value);
-
-            //自動執行
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -202,19 +201,19 @@ namespace EynyCrawler
             string HomePage =result;
             ArticleHtml.Add(HomePage);
             //取得第N頁的Url 用來找下一頁的文章
-            //Dictionary<string, string> JumpPage = crawler.FindPage(HomePage);
-            ////迴圈取得第2~N頁的html(文章列表)
-            //    for (int i = 0; i < JumpPage.Count; i++)
-            //    {
-            //        var entry = JumpPage.ElementAt(i);
-            //        //將html加入list
-            //        string responseFromServer = crawler.getHTMLbyWebRequest(hostUri + entry.Value,"", ref Cookies);
-            //        ArticleHtml.Add(responseFromServer);
-            //        this.Invoke((MethodInvoker)delegate
-            //        {
-            //            label7.Text = String.Format("目前進度:取得文章列表中...(第{0}頁)", (i + 1));
-            //        });
-            //    }
+            Dictionary<string, string> JumpPage = crawler.FindPage(HomePage);
+            //迴圈取得第2~N頁的html(文章列表)
+            for (int i = 0; i < JumpPage.Count; i++)
+            {
+                var entry = JumpPage.ElementAt(i);
+                //將html加入list
+                string responseFromServer = crawler.getHTMLbyWebRequest(hostUri + entry.Value, "", ref Cookies);
+                ArticleHtml.Add(responseFromServer);
+                this.Invoke((MethodInvoker)delegate
+                {
+                    label7.Text = String.Format("目前進度:取得文章列表中...(第{0}頁)", (i + 1));
+                });
+            }
             
             return ArticleHtml;
         }
