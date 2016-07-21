@@ -45,9 +45,20 @@ public class FileHandler
 
         DataView dv = new DataView(dataSet.Tables[0]);
         //注意 這裡的欄位是資料庫裡的欄位名稱
-        if(!String.IsNullOrEmpty(title))
-            dv.RowFilter = "檔名 like '%" + title+"%'";
+        if (!String.IsNullOrEmpty(title))
+        {
+            dv.RowFilter +=dv.RowFilter != ""?" AND ":""+ "檔名 like '%" + title + "%'";
+        }
 
+        //過濾日期
+        if (!String.IsNullOrEmpty(date_B.ToString()))
+        {
+            dv.RowFilter += dv.RowFilter != "" ? " AND " : "" + "日期 > #" + date_B.ToString("yyyy/MM/dd") + "#";
+        }
+        if (!String.IsNullOrEmpty(date_E.ToString()))
+        {
+            dv.RowFilter += dv.RowFilter != "" ? " AND " : "" + "日期 < #" + date_E.ToString("yyyy/MM/dd") + "#";
+        }
 
         return dv;
     }
