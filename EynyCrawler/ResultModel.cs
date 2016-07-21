@@ -2,22 +2,14 @@
 using System.Collections.Generic;
 using System.Net;
 
-public class ResultModel
-{
-    public ResultModel()
-	{
-
-	}
-    public string FilePassword;
-    public List<string> DownloadLink;
-    public string FileSize;
-
-}
 public class Article {
     public string Title;
     public string link;
     public string html;
-    public Article(string Title,string link,string html) {
+    public string FilePassword;
+    public List<string> DownloadLink;
+    public string FileSize;
+    public void SetArticle(string Title,string link,string html) {
         this.Title = Title;
         this.link = link;
         this.html = html;

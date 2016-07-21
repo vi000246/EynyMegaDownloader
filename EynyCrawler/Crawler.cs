@@ -141,10 +141,10 @@ namespace EynyCrawler
         }
 
         //取得子頁面的下載連結和解壓密碼 
-        public ResultModel GetDownloadLink(string html)
+        public Article GetDownloadLink(string html)
         {
             Dictionary<string, string> UrlList = new Dictionary<string, string>();
-            ResultModel Result = new ResultModel();
+            Article Result = new Article();
             Result.DownloadLink=new List<string>();
             try
             {
