@@ -49,11 +49,11 @@ public class FileHandler
         //過濾日期
         if (!String.IsNullOrEmpty(date_B.ToString()))
         {
-            QueryString += (QueryString != "" ? " AND " : "") + "日期 > #" + date_B.ToString("yyyy/MM/dd") + "#";
+            QueryString += (QueryString != "" ? " AND " : "") + "日期 >= #" + date_B.ToString("yyyy/MM/dd") + "#";
         }
         if (!String.IsNullOrEmpty(date_E.ToString()))
         {
-            QueryString += (QueryString != "" ? " AND " : "") + "日期 < #" + date_E.ToString("yyyy/MM/dd") + "#";
+            QueryString += (QueryString != "" ? " AND " : "") + "日期 <= #" + date_E.ToString("yyyy/MM/dd") + "#";
         }
         dv.RowFilter = QueryString;
         return dv;
@@ -62,7 +62,7 @@ public class FileHandler
     //刪除所有資料
     public void DeleteAllData(string title, DateTime date_B, DateTime date_E)
     {
-        db.CommandText = "Delete from MainText WHERE Date >= '"+date_B+"' AND Date < '"+date_E+"' ";
+        db.CommandText = "Delete from MainText WHERE Date >= '"+date_B+"' AND Date <= '"+date_E+"' ";
         if (!String.IsNullOrEmpty(title))
             db.CommandText += " And FileName like '%"+title+"%'";
         db.ExecuteNonQuery();
