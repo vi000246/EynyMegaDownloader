@@ -45,11 +45,15 @@ namespace EynyCrawler
             comboBox1.DataSource = new BindingSource(test, null);
             comboBox1.DisplayMember = "Value";
             comboBox1.ValueMember = "Key";
-
             comboBox1.SelectedIndex = 0;
 
+            dateTimePicker1.Format = DateTimePickerFormat.Custom;
+            dateTimePicker1.CustomFormat = " ";
+            dateTimePicker2.Format = DateTimePickerFormat.Custom;
+            dateTimePicker2.CustomFormat = " ";
+
             textBox4.Text =replyMsg;
-            dataGridView1.DataSource = FileHandler.data;
+            dataGridView1.DataSource = FileHandler.GetAllData(textBox5.Text, dateTimePicker1.Value, dateTimePicker2.Value);
 
             //自動執行
         }
@@ -60,7 +64,7 @@ namespace EynyCrawler
             try
             {
 
-                FileHandler.CreateFile(textBox1.Text);
+                //FileHandler.CreateFile(textBox1.Text);
                 DisableAllControl();
                 int msgLength = replyHandler.Encode(textBox4.Text).Length;
                 if (msgLength <= 30 && checkBox2.Checked)
@@ -103,8 +107,8 @@ namespace EynyCrawler
                 }
 
                 //將日期寫入文字檔
-                FileHandler.WriteText("日期:" + System.DateTime.Now.ToString() +
-                    Environment.NewLine + Environment.NewLine, textBox1.Text);
+                //FileHandler.WriteText("日期:" + System.DateTime.Now.ToString() +
+                //    Environment.NewLine + Environment.NewLine, textBox1.Text);
 
                 //取得前十頁文章列表的html 存到List<string> ArticleList
                 List<string> ArticleList = GetArticleList(Cookies);
@@ -146,14 +150,19 @@ namespace EynyCrawler
                 //將subPageHtml裡的html解析出結果 存檔進文字檔
                 foreach (Article obj in subPageHtml)
                 {
-                    FileHandler.WriteText("檔名:" + obj.Title + Environment.NewLine, textBox1.Text);
-                    FileHandler.WriteText("文章連結:" + hostUri + obj.link + Environment.NewLine, textBox1.Text);
+                    //FileHandler.WriteText("檔名:" + obj.Title + Environment.NewLine, textBox1.Text);
+                    //FileHandler.WriteText("文章連結:" + hostUri + obj.link + Environment.NewLine, textBox1.Text);
                     //如果有登入 將result裡的結果寫入Text
                     if (!checkBox1.Checked)
                     {
                         //解析下載地址 
                         var result = crawler.GetDownloadLink(obj.html);
-                        FileHandler.WriteResultToFile(result,textBox1.Text);
+                        result.Title = obj.Title;
+                        result.link = obj.link;
+                        FileHandler.insertData(result);
+                    }
+                    else {
+                        FileHandler.insertData(obj);
                     }
                     this.Invoke((MethodInvoker)delegate
                     {
@@ -164,8 +173,10 @@ namespace EynyCrawler
 
                 
                 MessageBox.Show("全部檔案已完成!!");
+                FileHandler.Dispose();
                 Application.ExitThread();
-                Environment.Exit(0);
+               // Environment.Exit(0);
+                EnableAllControl();
             }
             catch (Exception ex) {
                 EnableAllControl();
@@ -305,6 +316,36 @@ namespace EynyCrawler
                 textBox4.Enabled = false;
                 comboBox1.Enabled = false;
             });
+        }
+        
+        //搜尋資料按鈕
+        private void button3_Click(object sender, EventArgs e)
+        {
+            dataGridView1.DataSource = FileHandler.GetAllData(textBox5.Text, dateTimePicker1.Value, dateTimePicker2.Value);
+
+        }
+
+        //刪除所有資料並重新整理
+        private void button4_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("此舉將會刪除全部資料，確定繼續?", "確認刪除", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                FileHandler.DeleteAllData();
+                dataGridView1.DataSource = FileHandler.GetAllData(textBox5.Text, dateTimePicker1.Value, dateTimePicker2.Value);
+            }
+           
+        }
+
+        private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
+        {
+            dateTimePicker1.Format = DateTimePickerFormat.Custom;
+            dateTimePicker1.CustomFormat = "yyyy/MM/dd";
+        }
+
+        private void dateTimePicker2_ValueChanged(object sender, EventArgs e)
+        {
+            dateTimePicker2.Format = DateTimePickerFormat.Custom;
+            dateTimePicker2.CustomFormat = "yyyy/MM/dd";
         }
     }
 }
