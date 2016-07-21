@@ -3,6 +3,7 @@ using System.IO;
 using System.Data.SQLite;
 using System.Data;
 using System.Linq;
+using System.Collections.Generic;
 
 public class FileHandler
 {
@@ -32,11 +33,11 @@ public class FileHandler
         //呈現全部的資料
         DataSet dataSet = new DataSet();
 
-        //如果沒輸入搜尋條件 只取前一百筆資料
+        //如果沒輸入搜尋條件 只取前兩百筆資料
         string limit = (String.IsNullOrEmpty(title) &&
                         String.IsNullOrEmpty(date_B.ToString()) &&
                         String.IsNullOrEmpty(date_E.ToString())) ?
-            "limit 100" : "";
+            "limit 200" : "";
 
         SQLiteDataAdapter dataAdapter = new SQLiteDataAdapter(
             @"Select Date as 日期,FileName as 檔名,Link as 文章連結,Size as 檔案大小,
@@ -44,22 +45,23 @@ public class FileHandler
         dataAdapter.Fill(dataSet);
 
         DataView dv = new DataView(dataSet.Tables[0]);
+        string QueryString = string.Empty;
         //注意 這裡的欄位是資料庫裡的欄位名稱
         if (!String.IsNullOrEmpty(title))
         {
-            dv.RowFilter +=dv.RowFilter != ""?" AND ":""+ "檔名 like '%" + title + "%'";
+            QueryString += (QueryString != "" ? " AND " : "") + "檔名 like '%" + title + "%'";
         }
 
         //過濾日期
         if (!String.IsNullOrEmpty(date_B.ToString()))
         {
-            dv.RowFilter += dv.RowFilter != "" ? " AND " : "" + "日期 > #" + date_B.ToString("yyyy/MM/dd") + "#";
+            QueryString += (QueryString != "" ? " AND " : "") + "日期 > #" + date_B.ToString("yyyy/MM/dd") + "#";
         }
         if (!String.IsNullOrEmpty(date_E.ToString()))
         {
-            dv.RowFilter += dv.RowFilter != "" ? " AND " : "" + "日期 < #" + date_E.ToString("yyyy/MM/dd") + "#";
+            QueryString += (QueryString != "" ? " AND " : "") + "日期 < #" + date_E.ToString("yyyy/MM/dd") + "#";
         }
-
+        dv.RowFilter = QueryString;
         return dv;
     }
 
