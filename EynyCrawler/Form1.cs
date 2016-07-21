@@ -93,6 +93,7 @@ namespace EynyCrawler
                     Type = comboBox1.Text;
                     progressBar1.Minimum = 0;
                     progressBar1.Step = 1;
+                    progressBar1.Value = 0;
                 });
                 //如果沒勾選checkbox 取得登入後的cookie
                 if (!checkBox1.Checked)
@@ -172,7 +173,6 @@ namespace EynyCrawler
 
                 
                 MessageBox.Show("全部檔案已完成!!");
-                FileHandler.Dispose();
                 Application.ExitThread();
                // Environment.Exit(0);
                 EnableAllControl();
