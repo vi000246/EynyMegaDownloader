@@ -158,7 +158,7 @@ namespace EynyCrawler
                         //解析下載地址 
                         var result = crawler.GetDownloadLink(obj.html);
                         result.Title = obj.Title;
-                        result.link = obj.link;
+                        result.link = hostUri+obj.link;
                         FileHandler.insertData(result);
                     }
                     else {
@@ -328,9 +328,9 @@ namespace EynyCrawler
         //刪除所有資料並重新整理
         private void button4_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("此舉將會刪除全部資料，確定繼續?", "確認刪除", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (MessageBox.Show("此舉將會刪除目前搜尋的資料，確定繼續?", "確認刪除", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                FileHandler.DeleteAllData();
+                FileHandler.DeleteAllData(textBox5.Text, dateTimePicker1.Value, dateTimePicker2.Value);
                 dataGridView1.DataSource = FileHandler.GetAllData(textBox5.Text, dateTimePicker1.Value, dateTimePicker2.Value);
             }
            

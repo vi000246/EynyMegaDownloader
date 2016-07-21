@@ -275,7 +275,7 @@
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(85, 23);
             this.button4.TabIndex = 23;
-            this.button4.Text = "刪除所有資料";
+            this.button4.Text = "刪除目前資料";
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
