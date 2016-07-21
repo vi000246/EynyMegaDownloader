@@ -173,6 +173,7 @@ namespace EynyCrawler
 
                 
                 MessageBox.Show("全部檔案已完成!!");
+                dataGridView1.DataSource = FileHandler.GetAllData(textBox5.Text, dateTimePicker1.Value, dateTimePicker2.Value);
                 Application.ExitThread();
                // Environment.Exit(0);
                 EnableAllControl();
