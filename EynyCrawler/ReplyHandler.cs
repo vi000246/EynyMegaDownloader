@@ -97,7 +97,7 @@ namespace EynyCrawler
 
                 //發表回覆
                 Crawler crawler = new Crawler();
-                string result = crawler.getHTMLbyWebRequest(hostUri, postData, ref loginCookie);
+                string result = crawler.getHTMLbyWebRequest(hostUri, postData, ref loginCookie,false);
                 
                 //等待30秒CD時間 避免被論壇ban
                 int milliseconds = 30000;

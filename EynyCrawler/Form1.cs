@@ -173,7 +173,11 @@ namespace EynyCrawler
 
                 
                 MessageBox.Show("全部檔案已完成!!");
-                dataGridView1.DataSource = FileHandler.GetAllData(textBox5.Text, dateTimePicker1.Value, dateTimePicker2.Value);
+                this.Invoke((MethodInvoker)delegate
+                {
+                    dataGridView1.DataSource = FileHandler.GetAllData(textBox5.Text, dateTimePicker1.Value, dateTimePicker2.Value);
+                    dataGridView1.Refresh();
+                });
                 Application.ExitThread();
                // Environment.Exit(0);
                 EnableAllControl();
@@ -244,25 +248,35 @@ namespace EynyCrawler
 
         public void AddArticleHtml(KeyValuePair<string, string> dic, ref List<Article> subPageHtml, CookieCollection LoginCookies)
         {
-            //迴圈取出下載頁面的html 將文章標題 文章連結與下面頁面html存入araticle物件
-            string uri = hostUri + dic.Value;
-            string responseFromServer = crawler.getHTMLbyWebRequest(uri,"", ref Cookies);
-            Article article = new Article();
-            article.SetArticle(dic.Key,dic.Value,responseFromServer);
-
-            //發表回覆訊息
-            if (checkBox2.Checked)
-                replyHandler.PostReply(textBox4.Text, dic,ref  Cookies,article.html);
-
-            //將article放到List
-            subPageHtml.Add(article);
-            this.Invoke((MethodInvoker)delegate
+            try
             {
-                //progressBar+1
-                progressBar1.PerformStep();
-                label7.Text = "目前進度:取得文章頁面中..."
-                 + (int)((float)progressBar1.Value / progressBar1.Maximum * 100) + "%";
-            });
+                //迴圈取出下載頁面的html 將文章標題 文章連結與下面頁面html存入araticle物件
+                string uri = hostUri + dic.Value;
+                string responseFromServer = crawler.getHTMLbyWebRequest(uri, "", ref Cookies);
+                //如果回傳的是沒登入的頁面 就丟出例外
+                if (responseFromServer.Contains("訪客無法瀏覽下載點"))
+                    throw new ArgumentException("訪客無法瀏覽下載點 登入失敗!!");
+                Article article = new Article();
+                article.SetArticle(dic.Key, dic.Value, responseFromServer);
+
+                //發表回覆訊息
+                if (checkBox2.Checked)
+                    replyHandler.PostReply(textBox4.Text, dic, ref  Cookies, article.html);
+
+                //將article放到List
+                subPageHtml.Add(article);
+                this.Invoke((MethodInvoker)delegate
+                {
+                    //progressBar+1
+                    progressBar1.PerformStep();
+                    label7.Text = "目前進度:取得文章頁面中..."
+                     + (int)((float)progressBar1.Value / progressBar1.Maximum * 100) + "%";
+                });
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)

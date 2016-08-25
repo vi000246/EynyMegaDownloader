@@ -19,9 +19,10 @@ namespace EynyCrawler
         /// <param name="strUrl">此網址請加上queryString</param>
         /// <param name="postData">postData請先Encode過</param>
         /// <param name="Cookies">Cookie的記憶體位址</param>
+        /// <param name="IsUpdateCookie">是否依據回傳結果更新cookie</param>
         /// <returns></returns>
 
-        public string getHTMLbyWebRequest(string strUrl, string postData, ref CookieCollection Cookies)
+        public string getHTMLbyWebRequest(string strUrl, string postData, ref CookieCollection Cookies,bool IsUpdateCookie =true)
         {
             int Tries = 10;
             //retry
@@ -62,7 +63,8 @@ namespace EynyCrawler
 
                     HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                     //將resp.cookie的值寫到ref的cookie裡
-                    Cookies.Add(response.Cookies);
+                    if (IsUpdateCookie)
+                        Cookies.Add(response.Cookies);
                     Stream myResponseStream = response.GetResponseStream();
                     StreamReader myStreamReader = new StreamReader(myResponseStream, Encoding.UTF8);
                     string retString = myStreamReader.ReadToEnd();
