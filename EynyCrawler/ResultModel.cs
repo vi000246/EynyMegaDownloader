@@ -11,7 +11,7 @@ public class Article {
     public string FileSize;
     public void SetArticle(string Title,string link,string html) {
         this.Title = Title;
-        this.link = link;
+        this.link = link;   
         this.html = html;
     }
 
