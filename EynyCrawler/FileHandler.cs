@@ -24,7 +24,9 @@ public class FileHandler
         //將Command物件丟給全域變數
         db = sqlite_cmd;
 
-
+        db.CommandText = @"CREATE TABLE IF NOT EXISTS MainText(FileName TEXT,Link TEXT primary key,Size TEXT,Password TEXT,DownLoadLink TEXT ,Date default current_timestamp)";
+        db.ExecuteNonQuery();        
+        
     }
 
     //搜尋資料
@@ -75,7 +77,7 @@ public class FileHandler
         string MegaLink = article.DownloadLink.Count == 0 ? "" :
             article.DownloadLink.AsEnumerable().Aggregate((a, b) => a + "," + b);
 
-        db.CommandText = @"INSERT INTO MainText (FileName,Link,Size,Password,DownLoadLink) 
+        db.CommandText = @"INSERT OR IGNORE INTO MainText (FileName,Link,Size,Password,DownLoadLink) 
             VALUES (@Title,@link,@FileSize,@FilePassword,@DownloadLink)";
         db.Parameters.Add(new SQLiteParameter("@Title", article.Title));
         db.Parameters.Add(new SQLiteParameter("@link", article.link));
