@@ -152,7 +152,7 @@ namespace EynyCrawler
             {
                 string regFileSize = String.Empty;
                 string regPassword = String.Empty;
-                string regDownloadLink = @"(?<megaLink>https://mega(.co)?.nz/\#!?[a-zA-Z_!0-9-\#]{20,})";
+                string regDownloadLink = @"(?<megaLink>https://mega(.co)?.nz(/file)?/(\#!)?.{8}(\#|!).{43})";
                 //說明: (<.*>)*? match html tag  把<br>前的字串都取出來
                 regFileSize = @"(影片大小|檔案大小)[^0-9A-Za-z\u4e00-\u9fa5]*(<.*>)*?(?<filesize>[\u4e00-\u9fa50-9A-Za-z.\s-()/~，(<.*>)*?]*).*<br\s?/?>";
                 regPassword = @"(?<password>【?(解壓縮碼|解壓密碼|密碼).*)<br\s?/>";
